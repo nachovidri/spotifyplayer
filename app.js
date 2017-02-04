@@ -4,9 +4,20 @@ $(document).ready(function(){
 		var search = $('input[name="search"]').val();
 		console.log(search)
 		searchSpotify(search);
-	})
+	});
 
-	$('.btn-play').on()
+	$('.btn-play').on('click', function(){
+		if($(this).hasClass('playing')){
+			$('.js-player').trigger('pause');
+			$('.btn-play').removeClass('playing')
+		}else{
+			$('.js-player').trigger('play')
+			$('.btn-play').addClass('playing')
+		}
+	});
+
+	$('.js-player').on('timeupdate', printTime);
+
 })
 
 function searchSpotify(search){
@@ -27,16 +38,19 @@ function printSearch(search){
 	var author = search.tracks.items[0].album.artists[0].name;
 	var cover = search.tracks.items[0].album.images[0].url;
 
-	// console.log(title);
-
 	$('.title').append(title)
 	$('.author').append(author)
 	$('.cover img').attr("src", cover)
+	$('.btn-play').removeClass('disabled')
 }
 
 function addAudio (search) {
 	var audio = search.tracks.items[0].preview_url;
-	$('.js-player').attr("src", audio)
+	$('.js-player').attr("src", audio);
 }
 
-$('.js-player').trigger('play')
+function printTime () {
+	var current = $('.js-player').prop('currentTime');
+	// console.debug(current);
+	$('.seekbar progress').attr("value", current);
+}
